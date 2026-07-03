@@ -1,27 +1,30 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // CORREÇÃO AQUI: Mudamos de 'sw.js' para './sw.js' para respeitar a subpasta do GitHub Pages
-    navigator.serviceWorker.register('./sw.js').then((reg) => {
-      
-      // Verifica se já há uma atualização esperando para ser instalada
-      if (reg.waiting) {
-        solicitarAtualizacao(reg.waiting);
-      }
+    // Usamos o escopo explícito da pasta do repositório para evitar conflito de rotas no GitHub Pages
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then((reg) => {
+        // Verifica se há uma atualização instalada e esperando ativação
+        if (reg.waiting) {
+          solicitarAtualizacao(reg.waiting);
+        }
 
-      // Escuta se uma nova atualização chegar enquanto o app está aberto
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            solicitarAtualizacao(newWorker);
+        // Monitora novas atualizações enquanto o app estiver em execução
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                solicitarAtualizacao(newWorker);
+              }
+            });
           }
         });
+      })
+      .catch((err) => {
+        console.log('Service Worker não afetará o build: ', err);
       });
-    }).catch((err) => {
-      console.error('Erro ao registrar o Service Worker:', err);
-    });
 
-    // Controla o recarregamento automático da página após aceitar a atualização
+    // Recarrega a página automaticamente para aplicar as mudanças da nova versão
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!refreshing) {
@@ -33,9 +36,8 @@ if ('serviceWorker' in navigator) {
 }
 
 function solicitarAtualizacao(worker) {
-  // Cria uma caixa de confirmação nativa ou personalizada para o usuário
   const confirmar = confirm("Uma nova atualização do CineHub Premium está disponível! Deseja instalar agora?");
-  if (confirmar) {
+  if (confirmar && worker) {
     worker.postMessage('skipWaiting');
   }
 }
