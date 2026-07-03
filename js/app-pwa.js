@@ -1,6 +1,7 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then((reg) => {
+    // CORREÇÃO AQUI: Mudamos de 'sw.js' para './sw.js' para respeitar a subpasta do GitHub Pages
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
       
       // Verifica se já há uma atualização esperando para ser instalada
       if (reg.waiting) {
@@ -16,6 +17,8 @@ if ('serviceWorker' in navigator) {
           }
         });
       });
+    }).catch((err) => {
+      console.error('Erro ao registrar o Service Worker:', err);
     });
 
     // Controla o recarregamento automático da página após aceitar a atualização
