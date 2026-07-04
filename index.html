@@ -5,14 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineHub Premium</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <script src="js/app-pwa.js" defer></script>
+    <meta name="theme-color" content="#080b14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
-    <script src="js/app-pwa.js" defer></script>
-
+    
     <style>
         /* Estilos dos novos filtros visíveis e abertos (Inspirados no JustWatch) */
         .filter-section {
@@ -150,7 +155,7 @@
             <button class="btn-filter" data-value="hst">História</button>
             <button class="btn-filter" data-value="msc">Música & Musical</button>
             <button class="btn-filter" data-value="rly">Reality TV</button>
-            <button class="btn-filter" data-value="rma">Romance</option>
+            <button class="btn-filter" data-value="rma">Romance</button>
             <button class="btn-filter" data-value="scf">Ficção Científica</button>
             <button class="btn-filter" data-value="spt">Esporte & Fitness</button>
             <button class="btn-filter" data-value="trl">Mistério & Thriller</button>
@@ -196,10 +201,9 @@
 </footer>
 
 <script>
-    // Gerenciador de cliques para alternar as classes de seleção (.selected)
     configurarSeletoresMultiplos('filterPlataformas');
     configurarSeletoresMultiplos('filterGeneros');
-    configurarSeletoresMultiplos('filterAnos'); // Permite trocar o teto do ano se quiser alternar
+    configurarSeletoresMultiplos('filterAnos'); 
     configurarSeletorUnico('filterTipo');
 
     document.getElementById('btnPesquisar').addEventListener('click', executarBusca);
@@ -208,23 +212,19 @@
     });
 
     document.getElementById('btnSorteio').addEventListener('click', function() {
-        // Limpa seleções de gêneros atuais
         const botoesGens = document.querySelectorAll('#filterGeneros .btn-filter');
         botoesGens.forEach(btn => btn.classList.remove('selected'));
         
-        // Escolhe um gênero aleatório e o ativa
         const randomBtn = botoesGens[Math.floor(Math.random() * botoesGens.length)];
         randomBtn.classList.add('selected');
         
         executarBusca();
     });
 
-    // Função para permitir selecionar múltiplos botões em um grupo
     function configurarSeletoresMultiplos(containerId) {
         const container = document.getElementById(containerId);
         container.addEventListener('click', function(e) {
             if (e.target.classList.contains('btn-filter')) {
-                // Se for o grupo de anos, idealmente queremos apenas um ano limite por vez
                 if (containerId === 'filterAnos') {
                     container.querySelectorAll('.btn-filter').forEach(b => {
                         if (b !== e.target) b.classList.remove('selected');
@@ -235,7 +235,6 @@
         });
     }
 
-    // Função para permitir apenas um botão ativo (Tipo de conteúdo)
     function configurarSeletorUnico(containerId) {
         const container = document.getElementById(containerId);
         container.addEventListener('click', function(e) {
@@ -246,7 +245,6 @@
         });
     }
 
-    // Pega os valores de todos os botões que estão com a classe '.selected'
     function getValoresAtivos(containerId) {
         const selecionados = document.querySelectorAll(`#${containerId} .btn-filter.selected`);
         return Array.from(selecionados).map(btn => btn.getAttribute('data-value'));
@@ -259,7 +257,6 @@
         const anosSelecionados = getValoresAtivos('filterAnos');
         const tipoSelecionado = getValoresAtivos('filterTipo')[0] || 'todos';
 
-        // Se houver texto digitado, faz a busca padrão por string de texto
         if (termo) {
             window.open(`https://www.justwatch.com/br/busca?q=${encodeURIComponent(termo)}`, '_blank');
             return;
@@ -275,7 +272,6 @@
         let urlFinal = urlBase + pathTipo;
         const params = [];
 
-        // Lógica inteligente de rotas do JustWatch descoberta por você:
         if (plataformasSelecionadas.length === 1) {
             const p = plataformasSelecionadas[0];
             let providerPath = "";
@@ -294,7 +290,7 @@
         }
 
         if (anosSelecionados.length > 0) {
-            params.push(`release_year_until=${anosSelecionados[0]}`); // Pega o primeiro ano limite ativo
+            params.push(`release_year_until=${anosSelecionados[0]}`);
         }
 
         if (params.length > 0) {
