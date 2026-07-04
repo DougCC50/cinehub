@@ -1,22 +1,11 @@
 {
   "name": "CineHub Premium",
   "short_name": "CineHub",
-  "id": "/cinehub/",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#080b14",
   "theme_color": "#080b14",
-  "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "./icons/icon-192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "./icons/icon-512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
+      ...
   ]
 }
